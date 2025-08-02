@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:classico/splash_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget{
-  const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -14,84 +14,118 @@ class MyApp extends StatelessWidget{
       theme: ThemeData(
         primarySwatch: Colors.indigo
       ),
-      home: const MyHomePage(title: 'Flutter Demo App')
+      home: SplashScreen()
     );
   }
 }
 
 class MyHomePage extends StatefulWidget{
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-  final String title;
+  var namefromintro;
+  MyHomePage(this.namefromintro);
+
   @override
   State<MyHomePage> createState() => MyHomePageState();
 }
 
 class MyHomePageState extends State<MyHomePage> {
-
-  var controller1 = TextEditingController();
-  var controller2 = TextEditingController();
+  var wtController = TextEditingController();
+  var ftController = TextEditingController();
+  var inController = TextEditingController();
   var result = '';
+  var msgcolor;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title: Text('Flutter'),
+        backgroundColor: Colors.indigo,
+        title: Text('BMI CALCULATOR', style: TextStyle(color: Colors.white),),
       ),
 
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(11.0),
+        child: Container(
+          width: 300,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TextField(controller: controller1, keyboardType: TextInputType.number),
-              TextField(controller: controller2, keyboardType: TextInputType.number),
-              Padding(
-                padding: const EdgeInsets.all(21.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton(onPressed: (){
-                      setState(() {
-                        var no1 = int.parse(controller1.text.toString());
-                        var no2 = int.parse(controller2.text.toString());
-                        var sum = no1 + no2;
-                        result = '$sum';
-                      });
-                    }, child: Text('Add')),
-
-                    ElevatedButton(onPressed: (){
-                      setState(() {
-                        var no1 = int.parse(controller1.text.toString());
-                        var no2 = int.parse(controller2.text.toString());
-                        var diff = no1 - no2;
-                        result = '$diff';
-                      });
-                    }, child: Text('Sub')),
-
-                    ElevatedButton(onPressed: (){
-                      setState(() {
-                        var no1 = int.parse(controller1.text.toString());
-                        var no2 = int.parse(controller2.text.toString());
-                        var prod = no1 * no2;
-                        result = '$prod';
-                      });
-                    }, child: Text('Multi')),
-
-                    ElevatedButton(onPressed: (){
-                      setState(() {
-                        var no1 = int.parse(controller1.text.toString());
-                        var no2 = int.parse(controller2.text.toString());
-                        var div = no1 / no2;
-                        result = '${div.toStringAsFixed(2)}.';
-                      });
-                    }, child: Text('Div')),
-                  ],
+              Text('Hey ${widget.namefromintro}!!',
+                style: TextStyle(
+                    fontSize: 30,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.bold
                 ),
               ),
-              Text('Result: $result', style: TextStyle(fontStyle: FontStyle.italic, color: Colors.indigo),)
+              SizedBox(height: 11),
+              Text('Here You Can Calculate Your BMI!!', style: TextStyle(
+                fontStyle: FontStyle.italic,
+                fontSize: 11
+              ),),
+              SizedBox(height: 11),
+              TextField(controller: wtController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  label: Text('Enter your Weight in kg'),
+                  prefixIcon: Icon(Icons.line_weight)
+                ),
+              ),
+              SizedBox(height: 11),
+              TextField(controller: ftController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  label: Text('Enter your Height in feet'),
+                  prefixIcon: Icon(Icons.height)
+                ),
+              ),
+              SizedBox(height: 11),
+              TextField(controller: inController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  label: Text('Enter your Height in inch'),
+                  prefixIcon: Icon(Icons.height)
+                ),
+              ),
+              SizedBox(height: 11),
+              ElevatedButton(onPressed: (){
+                var wt = wtController.text.toString();
+                var ft = ftController.text.toString();
+                var inc = inController.text.toString();
+                if(wt!='' && ft!=''&& inc!=''){
+                  var Wt = int.parse(wt);
+                  var Ft = int.parse(ft);
+                  var Inc = int.parse(inc);
+                  var tInc = (Ft*12) + Inc;
+                  var tCm = tInc * 2.54;
+                  var tM = tCm/100;
+                  var bmi = Wt/(tM*tM);
+                  var msg;
+                  if (bmi>25){
+                    msg = 'Your Overweight!!';
+                    msgcolor = Colors.red;
+                  }
+                  else if (bmi<18){
+                    msg = 'Your Underweight!!';
+                    msgcolor = Colors.orange;
+                  }
+                  else{
+                    msg = 'Your Healthy!!';
+                    msgcolor = Colors.green;
+                  }
+                  setState(() {
+                    result = '$msg \n Your BMI is ${bmi.toStringAsFixed(4)}';
+                  });
+                } else{
+                  setState(() {
+                    result = 'Please fill all the required blanks!!';
+                    msgcolor = Colors.black87;
+                  });
+                }
+              }, child: Text(
+                'Calculate', style: TextStyle(color: Colors.black87),
+                )
+              ),
+              SizedBox(height: 11),
+              Text(result, textAlign: TextAlign.center,
+                style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15, color: msgcolor),),
             ],
           ),
         ),
